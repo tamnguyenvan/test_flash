@@ -27,7 +27,7 @@ class FlashlightAppState extends State<FlashlightApp> {
   Future<void> _initializeCamera() async {
     final cameras = await availableCameras();
     if (cameras.isNotEmpty) {
-      _controller = CameraController(cameras.first, ResolutionPreset.low);
+      _controller = CameraController(cameras[1], ResolutionPreset.low);
       await _controller!.initialize();
     }
   }
