@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:camera_web/camera_web.dart';
 
-
 void main() {
   runApp(const FlashlightApp());
 }
@@ -27,7 +26,15 @@ class FlashlightAppState extends State<FlashlightApp> {
   Future<void> _initializeCamera() async {
     final cameras = await availableCameras();
     if (cameras.isNotEmpty) {
-      _controller = CameraController(cameras[1], ResolutionPreset.low);
+      CameraDescription? selectedCamera;
+
+      for (var camera in cameras) {
+        if (camera.lensDirection == CameraLensDirection.back) {
+          selectedCamera = camera;
+        }
+      }
+
+      _controller = CameraController(selectedCamera ?? cameras[0], ResolutionPreset.low, enableAudio: false);
       await _controller!.initialize();
     }
   }
@@ -63,7 +70,9 @@ class FlashlightAppState extends State<FlashlightApp> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                icon: _isFlashOn ? const Icon(Icons.flash_off) : const Icon(Icons.flash_on),
+                icon: _isFlashOn
+                    ? const Icon(Icons.flash_off)
+                    : const Icon(Icons.flash_on),
                 onPressed: _toggleFlashlight,
               ),
               Text(_isFlashOn ? 'Flashlight On' : 'Flashlight Off'),
